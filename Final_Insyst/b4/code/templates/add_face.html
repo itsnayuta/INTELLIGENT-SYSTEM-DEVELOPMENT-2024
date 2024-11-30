@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thêm Mặt - Facial Recognition Attendance</title>
+    <link rel="stylesheet" href="static/styles3.css">
+</head>
+<body>
+    <!-- Thanh điều hướng bên trái -->
+    <div class="navbar">
+        <h2>Menu</h2>
+        <a href="/">Home</a>
+        <a href="/get_detection_history">History</a>
+        <a href="/add_face_page">Add face</a> <!-- Thêm liên kết đến trang thêm mặt -->
+    </div>
+
+    <!-- Phần nội dung chính -->
+    <div class="main-content">
+        <div class="form-container">
+            <h1>Add new face</h1>
+            <form id="upload-form" enctype="multipart/form-data">
+                <input type="text" id="name" name="name" placeholder="Enter name" required>
+                <input type="file" id="face_image" name="face_image" accept="image/*" required>
+                <button type="submit">Add</button>
+            </form>
+            <p id="message" style="color: green;"></p> <!-- Nơi hiển thị thông báo -->
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('upload-form').addEventListener('submit', function (e) {
+            e.preventDefault(); // Ngăn form nộp lại bình thường
+            const formData = new FormData(this);
+    
+            fetch('/add_face', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.text())
+                .then(data => {
+                    document.getElementById('message').innerText = data; // Hiển thị thông báo
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('message').innerText = error;
+                });
+        });
+    </script>
+</body>
+</html>

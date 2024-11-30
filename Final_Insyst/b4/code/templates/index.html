@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facial Recognition Attendance</title>
+    <link rel="stylesheet" href="static/styles.css">
+</head>
+<body>
+    <!-- Thanh điều hướng bên trái -->
+    <div class="navbar">
+        <h2>Menu</h2>
+        <a href="/">Home</a>
+        <a href="/get_detection_history">History</a>
+        <a href="/add_face_page">Add face</a>
+    </div>
+
+    <!-- Phần nội dung chính -->
+    <div class="main-content">
+        <!-- Video Container -->
+        <div class="video-container">
+            <img src="{{ url_for('video_feed') }}" alt="Video Stream">
+        </div>
+
+        <!-- Phần nhận diện khuôn mặt -->
+        <div class="recognized-container">
+            <h3>Recognized Faces:</h3>
+            <table id="recognized-names">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Name</th>
+                        <th>Time Detected</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Dynamic content will go here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Fetch recognized faces every 2 seconds
+        function updateRecognizedFaces() {
+            fetch('/get_recognized_faces')
+                .then(response => response.json())
+                .then(data => {
+                    const facesList = document.getElementById('recognized-names').getElementsByTagName('tbody')[0];
+                    facesList.innerHTML = ''; // Clear previous list
+
+                    data.faces.forEach((face, index) => {
+                        const row = facesList.insertRow();
+                        row.insertCell(0).textContent = index + 1;
+                        row.insertCell(1).textContent = face.name;
+                        row.insertCell(2).textContent = face.time;
+                    });
+                })
+                .catch(error => console.error('Error fetching recognized faces:', error));
+        }
+
+        // Update list every 2 seconds
+        setInterval(updateRecognizedFaces, 2000);
+    </script>
+</body>
+</html>

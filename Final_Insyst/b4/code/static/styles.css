@@ -1,0 +1,151 @@
+/* Reset margin và padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Toàn bộ body */
+body {
+    display: flex;
+    height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+/* Thanh điều hướng (navbar) */
+.navbar {
+    width: 250px;
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 100vh;
+    position: fixed;
+}
+
+.navbar h2 {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 12px 0;
+    font-size: 18px;
+    margin-bottom: 10px;
+    text-align: center;
+    border-bottom: 1px solid #ddd;
+    transition: background-color 0.3s;
+}
+
+.navbar a:hover {
+    background-color: #45a049;
+}
+
+/* Phần nội dung chính */
+.main-content {
+    margin-left: 250px;
+    padding: 20px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    flex: 1;
+}
+
+/* Tiêu đề */
+h1 {
+    color: #333;
+    text-align: center;
+    font-size: 2.5em;
+}
+
+/* Phần chứa video */
+.video-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    max-width: 800px; /* Giới hạn chiều rộng của video */
+    margin-bottom: 30px;
+}
+
+.video-container img {
+    width: 100%; /* Giảm kích thước video */
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Phần bảng danh sách nhận diện khuôn mặt */
+.recognized-container {
+    margin-top: 50px !important;
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+}
+
+#recognized-names {
+    width: 100%;
+    max-height: 400px;
+    overflow-y: auto;
+    border-collapse: collapse;
+    margin-top: 20px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+}
+
+#recognized-names th, #recognized-names td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+#recognized-names th {
+    background-color: #f4f4f4;
+}
+
+#recognized-names tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#recognized-names tbody tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Form thêm khuôn mặt */
+.form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+input, button {
+    padding: 10px;
+    font-size: 16px;
+    width: 250px;
+    margin: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+/* Thông báo */
+#message {
+    color: green;
+    text-align: center;
+    font-weight: bold;
+}
