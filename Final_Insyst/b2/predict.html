@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diabetes Prediction</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+      }
+      .container {
+        width: 50%;
+        margin: 0 auto;
+        padding: 20px;
+        background: #fff;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        border-radius: 5px;
+      }
+      h1 {
+        text-align: center;
+      }
+      form {
+        display: flex;
+        flex-direction: column;
+      }
+      label {
+        margin: 10px 0 5px;
+      }
+      input {
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      select {
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+      button {
+        padding: 10px;
+        background-color: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+      button:hover {
+        background-color: #218838;
+      }
+      .result {
+        margin-top: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Diabetes Prediction</h1>
+      <form id="predictForm">
+        <label for="subjectSelect">Select Subject:</label>
+        <select id="subjectSelect" name="subjectSelect">
+          <option value="subject 1">Subject 1</option>
+          <option value="subject 2">Subject 2</option>
+        </select>
+
+        <label for="field1">Field 1:</label>
+        <input type="number" id="field1" name="field1" required />
+
+        <label for="field2">Field 2:</label>
+        <input type="number" id="field2" name="field2" required />
+
+        <label for="field3">Field 3:</label>
+        <input type="number" id="field3" name="field3" required />
+
+        <!-- Dropdown for model selection -->
+        <label for="modelSelect">Select Model:</label>
+        <select id="modelSelect" name="modelSelect">
+          <option value="normal">Normal Model</option>
+          <option value="cnn">CNN Model</option>
+          <option value="rnn">RNN Model</option>
+          <option value="lstm">LSTM Model</option>
+        </select>
+
+        <button type="submit">Predict</button>
+      </form>
+      <div class="result" id="result"></div>
+    </div>
+
+    <script>
+      document
+        .getElementById("predictForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const field1 = document.getElementById("field1").value;
+          const field2 = document.getElementById("field2").value;
+          const field3 = document.getElementById("field3").value;
+          const selectedModel = document.getElementById("modelSelect").value;
+          const selectedSubject =
+            document.getElementById("subjectSelect").value;
+
+          fetch("http://127.0.0.1:5000/diabetes/v1/predict", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              1: field1,
+              2: field2,
+              3: field3,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              let predictionResult;
+              if (selectedModel === "cnn") {
+                predictionResult = data.prediction_cnn;
+              } else if (selectedModel === "rnn") {
+                predictionResult = data.prediction_rnn;
+              } else if (selectedModel === "lstm") {
+                predictionResult = data.prediction_lstm;
+              } else {
+                predictionResult = data.prediction; // Default to normal model
+              }
+
+              const roundedPrediction = predictionResult.toFixed(2);
+              let ans, final;
+              if (selectedSubject === "subject 1") {
+                final =
+                  0.1 * field1 +
+                  0.1 * field2 +
+                  0.2 * field3 +
+                  0.6 * roundedPrediction;
+              } else {
+                final =
+                  0.1 * field1 +
+                  0.2 * field2 +
+                  0.2 * field3 +
+                  0.5 * roundedPrediction;
+              }
+              if (final < 4) ans = "F";
+              else if (final < 6) ans = "D";
+              else if (final < 7) ans = "C";
+              else if (final < 8) ans = "B";
+              else if (final < 8.5) ans = "B+";
+              else if (final < 9) ans = "A";
+              else ans = "A+";
+              document.getElementById("result").innerHTML = `
+                <h2>Prediction Result:</h2>
+                <p><strong>${ans}</strong></p>
+            `;
+            })
+            .catch((error) => {
+              console.error("Error:", error);
+              document.getElementById(
+                "result"
+              ).innerHTML = `<p>Error occurred while fetching the prediction.</p>`;
+            });
+        });
+    </script>
+  </body>
+</html>
