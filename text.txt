@@ -1,0 +1,30 @@
+Viết chương trình Python thực hiện phép nén/giải nén dữ liệu Huffman encoding.
+Input cho mã quy định:
+C là nén - Coding
+D là giải nén - Decoding
+tiếp theo chuỗi dữ liệu cần nén/giải nén.
+Output:
+- Nếu yêu cầu là C - nén: output là chuỗi: ký tự-mã.
+- Nếu yêu cầu là D - giải nén: output là chuỗi ký tự gốc
+Input format:
+input=
+C
+abracadabra
+Output format:
+01001110110101100010101101
+input=
+D
+01001110110101100010101101
+Output format:
+abracadabra
+
+
+Viết chương trình Python thực hiện phép nén/giải nén dữ liệu Huffman encoding.
+Input cho mã quy định
+tiếp theo chuỗi dữ liệu cần nén/giải nén.
+Output là chuỗi: ký tự-mã.
+Input format:
+C
+abracadabra
+Output format:
+01001110110101100010101101
