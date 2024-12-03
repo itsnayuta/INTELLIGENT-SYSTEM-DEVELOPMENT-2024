@@ -6,54 +6,98 @@
     <title>Diabetes Prediction</title>
     <style>
       body {
-        font-family: Arial, sans-serif;
+        font-family: 'Arial', sans-serif;
         margin: 0;
         padding: 0;
-        background-color: #f4f4f4;
+        background-color: #f7f9fc;
       }
+
       .container {
-        width: 50%;
-        margin: 0 auto;
-        padding: 20px;
-        background: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
+        width: 60%;
+        margin: 50px auto;
+        padding: 30px;
+        background: #ffffff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
       }
+
       h1 {
         text-align: center;
+        color: #333;
+        font-size: 36px;
+        margin-bottom: 30px;
       }
+
       form {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 15px;
+        padding: 20px;
+        background-color: #f9fafb;
+        border-radius: 8px;
       }
+
       label {
-        margin: 10px 0 5px;
+        font-size: 16px;
+        color: #555;
       }
-      input {
-        padding: 10px;
-        margin-bottom: 10px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-      }
+
+      input,
       select {
-        padding: 10px;
-        margin-bottom: 10px;
+        padding: 12px;
+        font-size: 16px;
         border: 1px solid #ddd;
-        border-radius: 5px;
+        border-radius: 6px;
+        background-color: #f3f4f6;
       }
-      button {
-        padding: 10px;
-        background-color: #28a745;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
+
+      select {
         cursor: pointer;
       }
+
+      input:focus,
+      select:focus {
+        outline: none;
+        border-color: #28a745;
+        background-color: #ffffff;
+      }
+
+      button {
+        padding: 12px;
+        background-color: #28a745;
+        color: #fff;
+        font-size: 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
       button:hover {
         background-color: #218838;
       }
+
       .result {
-        margin-top: 20px;
+        margin-top: 30px;
+        background-color: #f7f7f7;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .result h2 {
+        margin: 0;
+        color: #333;
+      }
+
+      .result p {
+        color: #555;
+        font-size: 18px;
+      }
+
+      .result strong {
+        font-size: 20px;
+        color: #007bff;
       }
     </style>
   </head>
@@ -76,7 +120,6 @@
         <label for="field3">Field 3:</label>
         <input type="number" id="field3" name="field3" required />
 
-        <!-- Dropdown for model selection -->
         <label for="modelSelect">Select Model:</label>
         <select id="modelSelect" name="modelSelect">
           <option value="normal">Normal Model</option>
@@ -87,6 +130,7 @@
 
         <button type="submit">Predict</button>
       </form>
+
       <div class="result" id="result"></div>
     </div>
 
@@ -151,7 +195,8 @@
               else ans = "A+";
               document.getElementById("result").innerHTML = `
                 <h2>Prediction Result:</h2>
-                <p><strong>${ans}</strong></p>
+                <p>Điểm thi cuối kì: <strong>${roundedPrediction}</strong></p>
+                <p><strong>Điểm tổng kết: ${ans}</strong></p>
             `;
             })
             .catch((error) => {

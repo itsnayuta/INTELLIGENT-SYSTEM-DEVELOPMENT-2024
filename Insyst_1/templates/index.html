@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MNIST Prediction</title>
+</head>
+<body>
+    <h1>Upload an image to predict (MNIST)</h1>
+    <form method="POST" enctype="multipart/form-data">
+        <input type="file" name="file" accept="image/*">
+        <input type="submit" value="Predict">
+    </form>
+
+    {% if request.method == 'POST' and cnn_prediction and rnn_prediction %}
+        <h2>Predictions:</h2>
+        <p><strong>CNN Prediction:</strong> {{ cnn_prediction }}</p>
+        <p><strong>RNN Prediction:</strong> {{ rnn_prediction }}</p>
+    {% endif %}
+</body>
+</html>
