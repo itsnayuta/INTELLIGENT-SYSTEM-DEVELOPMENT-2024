@@ -16,7 +16,6 @@ def normalize_image(image):
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image_resized = cv2.resize(image_rgb, (160, 160))
     
-  
     image_normalized = image_resized / 255.0
 
     return np.expand_dims(image_normalized, axis=0)
