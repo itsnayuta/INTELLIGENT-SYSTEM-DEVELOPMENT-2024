@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        /* Reset cơ bản */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        form {
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        input, select {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #map {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        .result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+        }
+        .error {
+            color: red;
+        }
+        #address-container {
+        margin-top: 10px;
+        padding: 10px 15px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        font-size: 16px;
+        color: #333;
+        text-align: center;
+    }
+
+    #address-container p {
+        margin: 0;
+        line-height: 1.5;
+    }
+
+    #address-container span {
+        font-weight: bold;
+        color: #4CAF50;
+    }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>🏠 Dự đoán gia nhà</h2>
+        <div id="map"></div>
+        
+        <div id="address-container">
+            <p id="address">
+                <span style="font-weight: bold; color: #4CAF50;">📍 Address:</span> Please select a location on the map.
+            </p>
+        </div>
+        <form id="address-search-form">
+            <label for="address-search">Search for an Address:</label>
+            <input type="text" id="address-search" name="address-search" placeholder="Enter address">
+            <button type="button" onclick="searchAddress()">Search</button>
+        </form>
+        
+        <form id="prediction-form">
+            <label for="model">Select Model:</label>
+            <select id="model" name="model" required>
+                <option value="cnn">CNN</option>
+                <option value="rnn">RNN</option>
+                <option value="lstm">LSTM</option>
+            </select>
+
+            <label for="bedroom">Number of Bedrooms:</label>
+            <input type="number" id="bedroom" name="bedroom" placeholder="Enter number of bedrooms" required>
+
+            <label for="areaM2">Area (m²):</label>
+            <input type="number" id="areaM2" name="areaM2" placeholder="Enter area in square meters" required>
+
+            <input type="hidden" id="lat" name="lat">
+            <button type="button" onclick="predictPrice()">Predict Price</button>
+        </form>
+
+        <div class="result" id="result"></div>
+    </div>
+
+    <script>
+        // Initialize Leaflet map
+        const map = L.map('map').setView([21.0285, 105.8542], 13); // Default center: Hanoi, Vietnam
+
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19
+        }).addTo(map);
+
+        // Marker to show selected location
+        let marker;
+
+        // Handle map click event
+        map.on('click', function (e) {
+            const { lat, lng } = e.latlng;
+
+            // Update the marker position
+            if (marker) {
+            marker.setLatLng(e.latlng);
+            } else {
+            marker = L.marker(e.latlng).addTo(map);
+            }
+
+            // Update latitude input field
+            document.getElementById('lat').value = lat;
+
+            // Reverse Geocoding to get address
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data && data.display_name) {
+                        document.getElementById('address').innerHTML = `
+                            <span style="font-weight: bold; color: #4CAF50;">📍 Address:</span> ${data.display_name}
+                        `;
+                    } else {
+                        document.getElementById('address').innerHTML = `
+                            <span style="font-weight: bold; color: #4CAF50;">📍 Address:</span> Unable to determine location
+                        `;
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching address:", error);
+                    document.getElementById('address').innerHTML = `
+                        <span style="font-weight: bold; color: #4CAF50;">📍 Address:</span> Error fetching location
+                    `;
+                });
+        });
+        // Function to search address and update map
+        function searchAddress() {
+            const address = document.getElementById("address-search").value;
+
+            if (!address) {
+                alert("Please enter an address.");
+                return;
+            }
+
+            fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json`)
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.length > 0) {
+                        const lat = data[0].lat;
+                        const lon = data[0].lon;
+
+                        // Center map on the searched location
+                        map.setView([lat, lon], 13);
+
+                        // Add or update marker
+                        if (marker) {
+                            marker.setLatLng([lat, lon]);
+                        } else {
+                            marker = L.marker([lat, lon]).addTo(map);
+                        }
+
+                        // Update latitude input field
+                        document.getElementById('lat').value = lat;
+
+                        // Update address display
+                        document.getElementById('address').innerHTML = `
+                            <span style="font-weight: bold; color: #4CAF50;">📍 Address:</span> ${data[0].display_name}
+                        `;
+                    } else {
+                        alert("Address not found.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error fetching address:", error);
+                    alert("Error fetching address.");
+                });
+        }
+
+        // Function to predict price
+        function predictPrice() {
+            const model = document.getElementById("model").value;
+            const lat = document.getElementById("lat").value;
+            const bedroom = document.getElementById("bedroom").value;
+            const areaM2 = document.getElementById("areaM2").value;
+
+            if (!lat) {
+            alert("Please select a location on the map.");
+            return;
+            }
+
+            fetch("/predict", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ model, lat, bedroom, areaM2 }),
+            })
+            .then((response) => response.json())
+            .then((data) => {
+                const resultDiv = document.getElementById("result");
+                if (data.error) {
+                resultDiv.innerHTML = `<p class="error">${data.error}</p>`;
+                } else {
+                resultDiv.innerHTML = `<p>Predicted Price: $${data.price}</p>`;
+                }
+            })
+            .catch((error) => {
+                console.error("Error:", error);
+            });
+        }
+
+    </script>
+</body>
+</html>
