@@ -7,10 +7,10 @@ app = Flask(__name__)
 CORS(app)
 
 # ---the filename of the saved model---
-filename = 'Final_Insyst/b2/bai2.h5'
-filename_cnn = 'Final_Insyst/b2/bai2_cnn.h5'
-filename_rnn = 'Final_Insyst/b2/bai2_rnn.h5'
-filename_lstm = 'Final_Insyst/b2/bai2_lstm.h5'
+filename = 'bai2.h5'
+filename_cnn = 'bai2_cnn.h5'
+filename_rnn = 'bai2_rnn.h5'
+filename_lstm = 'bai2_lstm.h5'
 
 # ---load the saved model---
 loaded_model = load_model(filename)
@@ -20,7 +20,7 @@ loaded_model_lstm = load_model(filename_lstm)
 
 @app.route('/')
 def home():
-    return send_file('predict.html')
+    return send_file('templates/predict.html')
 
 @app.route('/diabetes/v1/predict', methods=['POST'])
 def predict():
