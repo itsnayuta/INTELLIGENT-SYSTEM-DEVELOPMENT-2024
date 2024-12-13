@@ -1,2 +1,2 @@
 # INTELLIGENT-SYSTEM-DEVELOPMENT-2024
-Nguyen Thanh Long
+Quac quac
